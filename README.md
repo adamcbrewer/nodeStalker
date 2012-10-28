@@ -1,4 +1,5 @@
-nodeStalker
-===========
+## Static Node Server
 
-A Node.js demon to monitor OS files and server performance. Excuse to learn MongoDB and keep track of my Linode setup.
+Contain a very quick setup for running a node server using Express and Socket.io.
+
+Includes a basic scipt for tracking client connections.
