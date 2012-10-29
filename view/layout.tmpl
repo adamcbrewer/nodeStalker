@@ -2,10 +2,12 @@
 <head>
 	<meta charset="utf-8">
 
-	<title>Node Launchpad</title>
+	<title>NodeStalker</title>
 
-	<meta name="description" content="">
+	<meta name="description" content="Node client to stalk your filesystem, even when you're not aware of it.">
 	<meta name="keywords" content="">
+
+	<script src="{{ siteurl }}/assets/js/libs/modernizr.custom.97357.js" async defer></script>
 
 </head>
 <body>
@@ -36,7 +38,8 @@
 	<script>
 		var App = {
 			socket: io.connect('{{ basePath }}'),
-			basePath: '{{ basePath }}'
+			basePath: '{{ basePath }}',
+			siteUrl: '{{ siteurl }}'
 		};
 
 	</script>
