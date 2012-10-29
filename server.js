@@ -3,6 +3,7 @@ var http = require('http'),
 	fs = require('fs'),
 	express = require('express'),
 	handlebars = require('handlebars'),
+	os = require('os'),
 
 	config = require(__dirname + '/config.js'),
 	Client = require(__dirname + '/models/client.js'),
@@ -25,9 +26,11 @@ var http = require('http'),
 
 			opts = opts || {};
 
-			this.stalkFiles({
-				files: opts.files
-			});
+			// TODO: Stalking files
+			// this.stalkFiles({ files: opts.files });
+
+			// TODO: move the interval time to config.js
+			this.stalkSystem(10000);
 
 		},
 
@@ -145,6 +148,71 @@ var http = require('http'),
 			}
 
 		},
+
+
+
+
+		//
+		// StalkSystem
+		//
+		// Watches system processes
+		// =========================================
+		//
+		stalkSystem: function (interval) {
+
+			var that = this;
+
+			// store them for future access
+			this.os = {
+				hostname: os.hostname(),
+				type: os.type(),
+				platform: os.platform(),
+				uptime: os.uptime(),
+				loadavg: os.loadavg(),
+				totalmem: os.totalmem(),
+				freemem: os.freemem(),
+				cpus: os.cpus(),
+				network: os.networkInterfaces()
+			};
+
+			// This function creates the interval for the server to check the system processes.
+			// It's so we only have the server doing this once.
+			setInterval(function () {
+				that.updateSystem();
+			}, interval); // 10 seconds
+
+
+
+		},
+
+
+		//
+		// pollSystem
+		//
+		// The function that's executed in the interval
+		// =========================================
+		//
+		updateSystem: function (args) {
+
+			var uptime = os.uptime(),
+				loadavg = os.loadavg(),
+				totalmem = os.totalmem(),
+				freemem = os.freemem(),
+				cpus = os.cpus();
+
+			this.os.uptime = uptime;
+			this.os.loadavg = loadavg;
+			this.os.totalmem = totalmem;
+			this.os.freemem = freemem;
+			this.os.cpus = cpus;
+
+			// Send the system details to all the clients
+			this.broadcast({
+				osData: this.os
+			}, false, true);
+
+		},
+
 
 
 
