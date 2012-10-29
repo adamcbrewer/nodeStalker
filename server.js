@@ -21,7 +21,13 @@ var http = require('http'),
 		//
 		clients: [],
 
-		init: function () {
+		init: function (opts) {
+
+			opts = opts || {};
+
+			this.stalkFiles({
+				files: opts.files
+			});
 
 		},
 
@@ -37,23 +43,6 @@ var http = require('http'),
 			this.clients.push(client);
 			console.log('-- LOG: The connected clients are: ' + this.clients.length);
 			this.broadcast({ message: 'hello you!'} , client, true);
-
-
-			this.stalkFiles({
-				files: [
-					{
-						name: "Apache error logs",
-						interval: 20000,
-						path: '/var/log/apache2/error_log'
-					},
-					{
-						name: "Apache access logs",
-						interval: 10000,
-						path: '/var/log/apache2/access_log'
-					}
-				]
-			});
-
 
 		},
 
@@ -187,11 +176,16 @@ serverInst.listen(config.serverPort);
 var publicDir = __dirname + '/public',
 	assetsDir = publicDir + '/assets';
 
-console.log(assetsDir);
-
 // Route all our requested assets to the public assets directory
 server.use('/assets', express.static(assetsDir));
 
+
+Server.init({
+	files: config.stalkingFiles
+});
+
+
+// Handle client and page requests from here on
 server.get('/*', function (req, res) {
 
 	var source = Server.loadTemplate('layout.tmpl'),
