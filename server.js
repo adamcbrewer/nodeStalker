@@ -30,7 +30,7 @@ var http = require('http'),
 			// this.stalkFiles({ files: opts.files });
 
 			// TODO: move the interval time to config.js
-			this.stalkSystem(10000);
+			this.stalkSystem(2000);
 
 		},
 
