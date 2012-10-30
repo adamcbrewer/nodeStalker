@@ -9,6 +9,22 @@
 		],
 		complete: function () {
 
+			var terminals = $('#terminals'),
+				terminalList = $('.terminal');
+
+
+			//
+			// Events
+			//
+			// =========================================
+			//
+			terminals.on('click', '.terminal', function (evt) {
+				evt.preventDefault();
+				terminalList.not(this).removeClass('active');
+				this.classList.add('active');
+			});
+
+
 			//
 			// Socket.io Listeners
 			//
@@ -18,6 +34,9 @@
 				// console.log(data);
 				if (data.results && data.results.osData) App.updateTerminals(data.results.osData);
 			});
+
+
+
 
 			//
 			// Update the front-end panels with data from the server
@@ -48,8 +67,43 @@
 				}
 
 
+				// Free memory
+				if (data.loadavg) {
+					terminal = $('[data-os="loadavg"]');
+					var i = 0,
+						loads = '',
+						types = '';
+						type = '';
+					for (i; i < data.loadavg.length; i++) {
+						if (i === 0) {
+							type = '1min';
+						} else if (i===1) {
+							type = '5min';
+						} else {
+							type = '15min';
+						}
+						loads += '<li>'+data.loadavg[i].toFixed(2)+'</li>';
+						types += '<li>'+type+'</li>';
+					}
+
+					terminal.find('[data-output="main"]').html(loads);
+					terminal.find('[data-output="raw"]').html(types);
+				}
 
 			};
+
+
+
+			//
+			//
+			//
+			// =========================================
+			//
+			App.displayDetails = function (osType) {
+
+			};
+
+
 		}
 	});
 
