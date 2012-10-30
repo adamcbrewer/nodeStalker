@@ -31,7 +31,6 @@
 			// =========================================
 			//
 			App.socket.on('broadcast', function (data) {
-				// console.log(data);
 				if (data.results && data.results.osData) App.updateTerminals(data.results.osData);
 			});
 
