@@ -1,7 +1,7 @@
 var http = require('http'),
 	https = require('https'),
 	fs = require('fs'),
-	lazy = require('lazy'),
+	reader = require('buffered-reader'),
 	express = require('express'),
 	handlebars = require('handlebars'),
 	os = require('os'),
@@ -31,7 +31,7 @@ var http = require('http'),
 			this.stalkFiles({ files: opts.files });
 
 			// TODO: move the interval time to config.js
-			// this.stalkSystem(2000);
+			this.stalkSystem(1000);
 
 		},
 
@@ -116,44 +116,39 @@ var http = require('http'),
 			fileObj = fileObj || false;
 
 			var interval = fileObj.interval || 10000, // 10 senconds default
-				i = 0;
+				i = 0,
+				lines = [],
+				that = this,
 
-			// fs.watchFile(fileObj.path, { interval: interval }, function (curr, prev) {
-			// 	console.log('-- LOG - '+fileObj.name+' changed at: ' + curr.mtime);
-			// 	console.log('-- LOG - The previous mtime was: ' + prev.mtime);
-			// 	fs.readFile(fileObj.path, 'utf8', function (err, data) {
-			// 		if (err) throw err;
-			// 		console.log(data);
+				dataReader = new reader.DataReader(fileObj.path, {encoding: "utf8"})
+					.on('error', function (error) {
+						console.log('error reading file: ' + error);
+					})
+					.on('line', function (line, nextByteOffset) {
+						i++;
+						lines.push('LINE: ' + i + ' - ' + line);
+					})
+					.on('end', function () {
 
-			// 	});
-			// });
+						var logs = {};
+						logs[fileObj.slug] = fileObj; // the original file data we were supplied
 
+						logs[fileObj.slug].latestLines = lines.slice(lines.length - 10); // last 10 lines
+						logs[fileObj.slug].lineCount = lines.length;
 
-			// var stream = fs.createReadStream(fileObj.path, { encoding: 'utf8' });
-			// stream.on('data', function (data) {
-				// i++;
-				// console.log('here');
-				// console.log('LINE: ' + i + ': ' + data + '\n');
-			// });
-			// console.log(stream);
-			// stream.on('error', function (err) {
-			// 	console.log(err);
-			// });
-			// stream.on('end', function () {
-			// 	console.log('this is the end for ' + fileObj.name);
-			// });
+						that.broadcast({
+							logs: logs
+						}, false, true);
 
-			var j = 0;
-			new lazy(fs.createReadStream(fileObj.path))
-				.lines
-				.forEach(function (line) {
-					j++;
-					console.log(j);
-					// console.log(++i + ': ' + line.toString());
-				});
-				console.log('totoal lines = ' + j);
+					});
 
-			console.log('here');
+			fs.watchFile(fileObj.path, { interval: interval }, function (curr, prev) {
+				dataReader.read();
+			});
+			//
+			// setInterval(function () {
+			// 	dataReader.read();
+			// }, 4000)
 
 		},
 

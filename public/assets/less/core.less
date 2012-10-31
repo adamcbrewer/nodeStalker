@@ -156,6 +156,12 @@ input:indeterminate {} /* un-selected radio buttons :) */
     /*-webkit-flow-into: details-space;*/
 }
 
+#logs {
+    display: -webkit-flex;
+    -webkit-flex: 2;
+    /*-webkit-flow-into: details-space;*/
+}
+
 
 
 /* ====================================================
@@ -164,7 +170,8 @@ input:indeterminate {} /* un-selected radio buttons :) */
     Modules are the reusable, modular parts of our design.
     They are the callouts, the sidebar sections, the product lists and so on.
 ==================================================== */
-.terminal {
+.terminal,
+.log {
     .light-border;
     .drop-shadow;
     .filter;
@@ -175,9 +182,9 @@ input:indeterminate {} /* un-selected radio buttons :) */
     text-align: center;
     -webkit-flex: 2;
 
-    -webkit-transform-style: preserve-3d;
+    /*-webkit-transform-style: preserve-3d;
     -webkit-transform:  rotateY(20deg)
-                        skewY(30deg);
+                        skewY(30deg);*/
 
     /*-webkit-transform: scale(0.5);*/
     -webkit-transition: 0.8s border-color ease,
@@ -192,13 +199,26 @@ input:indeterminate {} /* un-selected radio buttons :) */
         margin: 0 2%;
     }
 }
-.p-title {
+.p-title,
+.log-title {
     font-size: 1em;
     text-transform: uppercase;
 }
-.p-output {
+.p-output,
+.log-output {
     font-size: 2em;
     margin: 0.5em 0;
+}
+.bar-graph {
+    width: 100%;
+    height: 20px;
+    background-color: @c-glow-1;
+    .bar {
+        background-color: @c-copy-3;
+        color: #DDD;
+        height: 100%;
+        font-size: 14px;
+    }
 }
 
 /* ====================================================

@@ -34,7 +34,9 @@
 			// =========================================
 			//
 			App.socket.on('broadcast', function (data) {
+				console.log(data);
 				if (data.results && data.results.osData) App.updateTerminals(data.results.osData);
+				if (data.results && data.results.logs) App.updateLogs(data.results.logs);
 			});
 
 
@@ -60,11 +62,13 @@
 				}
 
 				// Free memory
-				if (data.freemem) {
+				if (data.freemem && data.totalmem) {
 					terminal = $('[data-os="freemem"]');
-					var niceMem = Math.round(data.freemem/1024/1024) + ' MB',
-						rawMem = data.freemem + ' bytes';
-					terminal.find('[data-output="main"]').html(niceMem);
+					var niceFreeMem = Math.round(data.freemem/1024/1024) + ' MB',
+						rawMem = data.freemem + ' bytes',
+						percentFree = Math.round(data.freemem / data.totalmem * 100) + '%';
+					terminal.find('[data-output="main"]').html(niceFreeMem + ' / ' + percentFree);
+					terminal.find('[data-bar="free"]').css('width', percentFree);
 					terminal.find('[data-output="raw"]').html(rawMem);
 				}
 
@@ -91,6 +95,28 @@
 					terminal.find('[data-output="main"]').html(loads);
 					terminal.find('[data-output="raw"]').html(types);
 				}
+
+			};
+
+
+
+
+			//
+			// Update the front-end panels with data from the server
+			//
+			// =========================================
+			//
+			App.updateLogs = function (logs) {
+
+				var log = null;
+
+				// Apache Error logs
+				if (logs.apacheErr) {
+					log = $('[data-log="apacheErr"]');
+
+					log.find('[data-output="main"]').html(logs.apacheErr.latestLines.join('<br />'));
+				}
+
 
 			};
 
