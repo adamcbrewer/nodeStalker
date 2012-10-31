@@ -1,6 +1,7 @@
 var http = require('http'),
 	https = require('https'),
 	fs = require('fs'),
+	lazy = require('lazy'),
 	express = require('express'),
 	handlebars = require('handlebars'),
 	os = require('os'),
@@ -27,10 +28,10 @@ var http = require('http'),
 			opts = opts || {};
 
 			// TODO: Stalking files
-			// this.stalkFiles({ files: opts.files });
+			this.stalkFiles({ files: opts.files });
 
 			// TODO: move the interval time to config.js
-			this.stalkSystem(2000);
+			// this.stalkSystem(2000);
 
 		},
 
@@ -114,20 +115,45 @@ var http = require('http'),
 
 			fileObj = fileObj || false;
 
-			var interval = fileObj.interval || 10000; // 10 senconds default
+			var interval = fileObj.interval || 10000, // 10 senconds default
+				i = 0;
 
-			fs.watchFile(fileObj.path, { interval: interval }, function (curr, prev) {
-				console.log('the current mtime is: ' + curr.mtime);
-				console.log('the previous mtime was: ' + prev.mtime);
-				fs.readFile(fileObj.path, 'utf8', function (err, data) {
-					if (err) throw err;
-					console.log(data);
-					// TODO
-					// that.broadcast({
+			// fs.watchFile(fileObj.path, { interval: interval }, function (curr, prev) {
+			// 	console.log('-- LOG - '+fileObj.name+' changed at: ' + curr.mtime);
+			// 	console.log('-- LOG - The previous mtime was: ' + prev.mtime);
+			// 	fs.readFile(fileObj.path, 'utf8', function (err, data) {
+			// 		if (err) throw err;
+			// 		console.log(data);
 
-					// });
+			// 	});
+			// });
+
+
+			// var stream = fs.createReadStream(fileObj.path, { encoding: 'utf8' });
+			// stream.on('data', function (data) {
+				// i++;
+				// console.log('here');
+				// console.log('LINE: ' + i + ': ' + data + '\n');
+			// });
+			// console.log(stream);
+			// stream.on('error', function (err) {
+			// 	console.log(err);
+			// });
+			// stream.on('end', function () {
+			// 	console.log('this is the end for ' + fileObj.name);
+			// });
+
+			var j = 0;
+			new lazy(fs.createReadStream(fileObj.path))
+				.lines
+				.forEach(function (line) {
+					j++;
+					console.log(j);
+					// console.log(++i + ': ' + line.toString());
 				});
-			});
+				console.log('totoal lines = ' + j);
+
+			console.log('here');
 
 		},
 
@@ -139,8 +165,8 @@ var http = require('http'),
 		// =========================================
 		//
 		stalkFiles: function (opts) {
-			var files = opts.files || [];
-			var that = this,
+			var files = opts.files || [],
+				that = this,
 				i = 0;
 
 			for (i; i < files.length; i++) {

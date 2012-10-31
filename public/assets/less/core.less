@@ -169,11 +169,21 @@ input:indeterminate {} /* un-selected radio buttons :) */
     .drop-shadow;
     .filter;
     color: @c-copy-1;
-    margin: 2%;
+    margin: 10px;
     background-color: @c-glow-3;
     padding: 4% 2%;
     text-align: center;
-    -webkit-flex: 1;
+    -webkit-flex: 2;
+
+    -webkit-transform-style: preserve-3d;
+    -webkit-transform:  rotateY(20deg)
+                        skewY(30deg);
+
+    /*-webkit-transform: scale(0.5);*/
+    -webkit-transition: 0.8s border-color ease,
+                        0.2s box-shadow ease 0s,
+                        0.4s -webkit-transform ease 0s;
+
     ul {
         display: -webkit-flex;
     }
@@ -181,15 +191,6 @@ input:indeterminate {} /* un-selected radio buttons :) */
         -webkit-flex: 1;
         margin: 0 2%;
     }
-
-    &:hover,
-    &.active {
-        .hover-drop-shadow;
-        .hover-light-border;
-        .hover-filter;
-        color: @c-copy-3;
-    }
-    /*-webkit-region-break-before: never;*/
 }
 .p-title {
     font-size: 1em;
@@ -198,12 +199,6 @@ input:indeterminate {} /* un-selected radio buttons :) */
 .p-output {
     font-size: 2em;
     margin: 0.5em 0;
-}
-
-.active {
-    /*-webkit-region-break-before: always;*/
-    /*-webkit-flow-into: details-space;*/
-    /**/
 }
 
 /* ====================================================
@@ -216,7 +211,18 @@ input:indeterminate {} /* un-selected radio buttons :) */
     They are also about describing how a module might look in different
     views like the home page or the inside page.
 ==================================================== */
-
+.terminal {
+    &:hover,
+    &.active {
+        .hover-drop-shadow;
+        .hover-light-border;
+        .hover-filter;
+        color: @c-copy-3;
+    }
+    &.active {
+        -webkit-transform: scale(1.4);
+    }
+}
 
 
 

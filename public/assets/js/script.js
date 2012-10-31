@@ -23,6 +23,9 @@
 				terminalList.not(this).removeClass('active');
 				this.classList.add('active');
 			});
+			$(window).on('keyup', function (evt) {
+				if (evt.keyCode === 27) terminalList.removeClass('active');
+			});
 
 
 			//
